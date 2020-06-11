@@ -1,0 +1,198 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-buttons slot="start">
+        <ion-icon name="add-circle" color="secondary" size="large" (click)="presentModal()"></ion-icon>
+      </ion-buttons>
+    </ion-buttons>
+    <ion-title>Transactions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <h5>Tap date to change month or year.</h5>
+  <ion-datetime displayFormat="MMMM YYYY" [(ngModel)]="date" min="2018-06-14" max="2090-06-14"></ion-datetime>
+
+  <ion-list>
+
+    <ion-item-group>
+      <div *ngIf="miscellaneous.length == 0">
+        <div>
+          <b>Add daily spending</b> by using <ion-icon name="add-circle" color="secondary" size="large"></ion-icon> in the upper right corner.
+          <br><br>
+          <b>Add recurring bills</b> (such as loans or credit cards) on the bills page found on the menu.
+          <br><br>
+          <b>Project bank accounts</b> on the cash page found on the menu.
+        </div>
+      </div>
+    </ion-item-group>
+    <ion-item-group>
+      <div *ngIf="miscellaneous.length">
+        <ion-label color='primary'>
+          <h2>Daily Spending</h2>
+        </ion-label>
+        <h5>Hold items to remove.</h5>
+        <div *ngFor="let item of miscellaneous; index as i">
+          <ion-card *ngIf="item.date == date">
+            <ion-card-content (press)='removeMisc(i)'>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="4">
+                    ${{ item.amount }}
+                  </ion-col>
+                  <ion-col>
+                    {{ item.name }}
+                  </ion-col>
+                  <ion-col size="1">
+                    <ion-checkbox (ionChange)='paidChangeMisc(item,i)' [(ngModel)]="item.paid"></ion-checkbox>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </div>
+    </ion-item-group>
+
+    <ion-item-group *ngIf="checking.length">
+      <ion-label color='primary'>
+        <h2>Checking <span>(Earned)</span></h2>
+      </ion-label>
+      <ion-item *ngFor="let item of checking; index as i">
+        <ion-label>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="4">
+                ${{ item.accountGroup[0].monthItems[date].new_payment }}
+              </ion-col>
+              <ion-col>
+                {{ item.name }}
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+
+    <ion-item-group *ngIf="savings.length">
+      <ion-label color='primary'>
+        <h2>Savings <span>(Earned)</span></h2>
+      </ion-label>
+      <ion-item *ngFor="let item of savings; index as i">
+        <ion-label>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="4">
+                ${{ item.accountGroup[0].monthItems[date].new_payment }}
+              </ion-col>
+              <ion-col>
+                {{ item.name }}
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+
+    <ion-item-group *ngIf="loans.length">
+      <ion-label color='primary'>
+        <h2>Loans</h2>
+      </ion-label>
+      <ion-item *ngFor="let item of loans; index as i">
+        <ion-label>
+          <ion-row>
+            <ion-col size="4">
+              ${{ item.accountGroup[0].monthItems[date].new_payment }}
+            </ion-col>
+            <ion-col>
+              {{ item.name }}
+            </ion-col>
+          </ion-row>
+        </ion-label>
+        <ion-checkbox (ionChange)='paidChange(item,i)' [(ngModel)]="item.accountGroup[0].monthItems[date].paid"></ion-checkbox>
+      </ion-item>
+    </ion-item-group>
+
+    <ion-item-group *ngIf="creditCards.length">
+      <ion-label color='primary'>
+        <h2>Credit Cards</h2>
+      </ion-label>
+      <ion-item *ngFor="let item of creditCards; index as i">
+        <ion-label>
+          <ion-row>
+            <ion-col size="4">
+              ${{ item.accountGroup[0].monthItems[date].new_payment }}
+            </ion-col>
+            <ion-col>
+              {{ item.name }}
+            </ion-col>
+          </ion-row>
+        </ion-label>
+        <ion-checkbox (ionChange)='paidChange(item,i)' [(ngModel)]="item.accountGroup[0].monthItems[date].paid"></ion-checkbox>
+      </ion-item>
+    </ion-item-group>
+
+    <ion-item-group *ngIf="rent.length">
+      <ion-label color='primary'>
+        <h2>Rent</h2>
+      </ion-label>
+      <ion-item *ngFor="let item of rent; index as i">
+        <ion-label>
+          <ion-row>
+            <ion-col size="4">
+              ${{ item.accountGroup[0].monthItems[date].new_payment }}
+            </ion-col>
+            <ion-col>
+              {{ item.name }}
+            </ion-col>
+          </ion-row>
+        </ion-label>
+        <ion-checkbox (ionChange)='paidChange(item,i)' [(ngModel)]="item.accountGroup[0].monthItems[date].paid"></ion-checkbox>
+        </ion-item>
+
+    </ion-item-group>
+
+    <ion-item-group *ngIf="utilites.length">
+      <ion-label color='primary'>
+        <h2>Utilites</h2>
+      </ion-label>
+      <ion-item *ngFor="let item of utilites; index as i">
+        <ion-label>
+          <ion-row>
+            <ion-col size="4">
+              ${{ item.accountGroup[0].monthItems[date].new_payment }}
+            </ion-col>
+            <ion-col>
+              {{ item.name }}
+            </ion-col>
+          </ion-row>
+        </ion-label>
+        <ion-checkbox (ionChange)='paidChange(item,i)' [(ngModel)]="item.accountGroup[0].monthItems[date].paid"></ion-checkbox>
+      </ion-item>
+    </ion-item-group>
+
+    <ion-item-group *ngIf="other.length">
+      <ion-label color='primary'>
+        <h2>Other</h2>
+      </ion-label>
+      <ion-item *ngFor="let item of other; index as i">
+        <ion-label>
+          <ion-row>
+            <ion-col size="4">
+              ${{ item.accountGroup[0].monthItems[date].new_payment }}
+            </ion-col>
+            <ion-col>
+              {{ item.name }}
+            </ion-col>
+          </ion-row>
+        </ion-label>
+        <ion-checkbox (ionChange)='paidChange(item,i)' [(ngModel)]="item.accountGroup[0].monthItems[date].paid"></ion-checkbox>
+      </ion-item>
+    </ion-item-group>
+
+  </ion-list>
+
+</ion-content>
